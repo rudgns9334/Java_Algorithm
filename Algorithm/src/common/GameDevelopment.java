@@ -20,12 +20,12 @@ public class GameDevelopment {
 			int nx = x + dx[d];
 			if(ny<0 || nx<0 || ny>=N || nx>=M) continue;
 			if(!visited[ny][nx]) {
-				visited[ny][nx] = true;
 				cnt += moving(ny,nx,d);
 			}
 		}
 		return cnt;
 	}
+	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 

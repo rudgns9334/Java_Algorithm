@@ -4,6 +4,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+// 익은 토마토 체크하는 것
+// 날짜만 체크해서 다 끝나고 다시 한번 루프 돌려서 체크하는 방법도 있다.
+
+// 다음부턴 버퍼로 입출력
+
 public class Main {
 
 	static int[] dy = {0, 0, 1, -1};
