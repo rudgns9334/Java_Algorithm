@@ -1,4 +1,4 @@
-package baekjoon.p_7576;
+package baekjoon.토마토_7576;
 
 import java.util.LinkedList;
 import java.util.Queue;

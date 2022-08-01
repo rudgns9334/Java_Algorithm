@@ -1,4 +1,4 @@
-package baekjoon.p_7562;
+package baekjoon.나이트의이동_7562;
 
 import java.util.LinkedList;
 import java.util.Queue;
