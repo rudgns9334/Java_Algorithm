@@ -1,4 +1,4 @@
-package baekjoon.단어의개수_1152;
+package baekjoon.재귀함수가뭔가요_17478;
 
 import java.util.Scanner;
 
