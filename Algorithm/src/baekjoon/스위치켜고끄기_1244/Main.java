@@ -26,22 +26,19 @@ public class Main {
 			t = Integer.parseInt(st.nextToken());
 			Snum = Integer.parseInt(st.nextToken());
 			if(t==1) {
-				int Cnum = Snum-1;
-				while(Cnum < N) {
-					Switch[Cnum] = (Switch[Cnum]+1)%2;
-					Cnum += Snum;
+				for (int j = Snum-1; j < N; j+=Snum) {
+					Switch[j] = Switch[j] == 0 ? 0 : 1;
 				}
 			}else {
-				int leftIdx = Snum-1;
-				int rightIdx = Snum-1;
+				int leftIdx = Snum-2;
+				int rightIdx = Snum;
 				Switch[Snum-1] = (Switch[Snum-1]+1)%2;
 				while(true) {
-					leftIdx--;
-					rightIdx++;
 					if(leftIdx<0 || rightIdx>=N) break;
 					if(Switch[leftIdx]!=Switch[rightIdx]) break;
-					Switch[leftIdx] = (Switch[leftIdx]+1)%2;
-					Switch[rightIdx] = (Switch[rightIdx]+1)%2;
+					Switch[rightIdx] = Switch[leftIdx] = Switch[leftIdx] == 0 ? 1 : 0;
+					leftIdx--;
+					rightIdx++;
 				}
 			}	
 		}
