@@ -3,45 +3,50 @@ package common;
 import java.util.Arrays;
 
 public class MuckBang {
-
+	
+	static public class Food{
+		public int amount;
+		public int index;
+	}
+	
 	public static void main(String[] args) {
-		int[] food_times = {3, 1, 2, 2, 4, 6};
-		long k = 17;
+		int[] food_times = {3,1,1,1,1,1};
+		long k = 2;
 		int answer = 0;
         int length = food_times.length;
-        int[] sort_food = Arrays.copyOf(food_times, length);
-        Arrays.sort(sort_food);
-        int cnt = 0;
-        int minV = 0;
-        long sum = 0;
         long ssum = 0;
-        for(int i=0;i<food_times.length;i++) {
-        	ssum += food_times[i];
+        
+        Food[] food = new Food[length];
+        for(int i=0;i<length;i++) {
+            ssum += food_times[i];
+        	food[i] = new Food();
+        	food[i].amount = food_times[i];
+        	food[i].index = i+1;
         }
-        if(k>=ssum) System.out.println(-1);
-        for(int i=0;i<sort_food.length;i++){
-            if(minV < sort_food[i]){
-            	sum = (sort_food[i]-minV)*(length-i);
-            	cnt = minV;
-            	minV = sort_food[i];
+        if(ssum<=k) System.out.println(-1);
+        else {
+        	Arrays.sort(food, (o1, o2) -> o1.amount == o2.amount ? o1.index - o2.index : o1.amount - o2.amount);
+            long minV = 0;
+            long sum = 0;
 
-                if(k>=sum){
-                	if(i==length-1) cnt = sort_food[i];
-                    k -= sum;
-                }else{
-                    break;
+            for(int i=0;i<length;i++){
+                if(minV < food[i].amount){
+                	sum = (food[i].amount-minV)*(length-i);
+                	minV = food[i].amount;
+
+                    if(k>=sum){
+                        k -= sum;
+                    }else {
+                        Arrays.sort(food,i,length,(o1, o2)->o1.index - o2.index);
+                    	answer = food[i+(int) (k % (length-i))].index;
+                        
+                        break;
+                    }
                 }
             }
+            System.out.println(answer);
         }
-        for(int i=0;i<food_times.length;i++){
-            if(k==0 && food_times[i] > cnt) {
-            	answer = i+1;
-            	break;
-            }
-            else if(food_times[i] > cnt) k--;
-        }
-        if(answer==0) answer = -1;
-        System.out.println(answer);
+        
 
 	}
 
