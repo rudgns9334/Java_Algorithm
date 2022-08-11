@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static int N,M,K,ans;
-	static int[][] map, rotation;
+	static int[][] map, backup, rotation;
 	static boolean[] used;
 	static int[] tar;
 	public static void main(String[] args) throws Exception{
@@ -19,11 +19,13 @@ public class Main {
 		ans = Integer.MAX_VALUE;
 		
 		map = new int[N+1][M+1];
+		backup = new int[N+1][M+1];
 		
 		for (int i = 1; i <= N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 1; j <= M; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
+				backup[i][j] = map[i][j] = Integer.parseInt(st.nextToken());
+				
 			}
 		}
 		
@@ -57,6 +59,11 @@ public class Main {
 					sum += map[i][j];
 				}
 				ans = Math.min(ans, sum);
+			}
+			for(int i=1;i<=N;i++) {
+				for(int j=1;j<=M;j++) {
+					map[i][j] = backup[i][j];
+				}
 			}
 			return;
 		}
