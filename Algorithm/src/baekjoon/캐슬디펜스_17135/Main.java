@@ -2,14 +2,19 @@ package baekjoon.캐슬디펜스_17135;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 
-	static int N, M, D, archer, ans, max, sum;
-	static int[][] map;
+	static int N, M, D, archer, ans;
+	static int[][] map,backup;
 	static int[] tgt;
+	static boolean[][] kill;
+	static int[] dy = {0, -1, 0};
+	static int[] dx = {-1, 0, 1};
 	
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -19,24 +24,19 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 		D = Integer.parseInt(st.nextToken());
 		
-		archer = N;
 		tgt = new int[3];
 		map = new int[N][M];
+		backup = new int[N][M];
 		ans = 0;
-		max = 0;
-		sum = 0;
+		
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < M; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
+				backup[i][j] = map[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
 		
-		while(check()) {
-			comb(0,0);
-			ans += sum;
-			archer--;
-		}
+		comb(0,0);
 		
 		System.out.println(ans);
 		
@@ -45,15 +45,14 @@ public class Main {
 
 	
 	static void comb(int srcIdx, int tgtIdx) { // srcIdx를 tgtIdx에 선택, 비선택 2가지 경우
-		
-		// 기저 조건
 		if(tgtIdx == 3) {
-			max = attack();
-			sum = Math.max(max, sum);
+			archer = N;
+			attack(0);
+			mapBackup();
 			return;
 		}
 		// 추가적인 기저조건
-		if(srcIdx == N) return;
+		if(srcIdx == M) return;
 		
 		// 선택
 		tgt[tgtIdx] = srcIdx;
@@ -62,31 +61,75 @@ public class Main {
 		comb(srcIdx +1, tgtIdx); // 현재 선택(tgtIdx <- srcIdx) 만족 X, 여전히 tgtIdx <- src+1;
 	}
 	
-	static boolean check() {
-		for (int i = 0; i < archer; i++) {
-			for (int j = 0; j < M; j++) {
-				if(map[i][j] == 1) return false;
-			}
+	static void attack(int sum) {
+		// 기저 조건
+		if(archer==0) {
+			ans = Math.max(ans, sum);
+			return;
+		}
+		int cnt = 0;
+		kill = new boolean[N][M];
+		for (int i = 0; i < 3; i++) {
+			findEnemy(tgt[i]);
 		}
 		
-		return true;
+		cnt = killEnemy();
+
+		archer--;
+		attack(sum+cnt);
 	}
-	static int attack() {
-		int arIdx = 0;
-		for (int i = archer-1; i >= 0 ; i--) {
+	
+	static int killEnemy() {
+		int cnt = 0;
+		for (int i = 0; i < archer; i++) {
 			for (int j = 0; j < M; j++) {
-				if(map[i][j] == 1) {
-					int d = Math.abs(i-archer) + Math.abs(j-tgt[arIdx]);
-					if(d<=D) {
-						map[i][j] = 0;
-						arIdx++;
-						if(arIdx == 3) return arIdx;
-					}
-					
+				if(kill[i][j]) {
+					map[i][j] = 0;
+					cnt++;
 				}
 			}
 		}
-		return arIdx;
+		return cnt;
+	}
+	
+	static void findEnemy(int idx) {
+		Queue<Node> q = new ArrayDeque<>();
+		boolean[][] visit = new boolean[N][M];
+		q.add(new Node(archer-1,idx,1));
+		visit[archer-1][idx] = true;
 		
+		while(!q.isEmpty()) {
+			Node n = q.poll();
+			if(n.d > D) continue;
+			if(map[n.y][n.x] == 1) {
+				kill[n.y][n.x] = true;
+				break;
+			}
+			for (int i = 0; i < 3; i++) {
+				int ny = n.y + dy[i];
+				int nx = n.x + dx[i];
+				if(ny<0 || nx<0 || nx>=M || visit[ny][nx]) continue;
+				visit[ny][nx] = true;
+				q.add(new Node(ny, nx, n.d+1));
+			}
+		}
+	}
+	
+	static void mapBackup() {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				map[i][j] = backup[i][j];
+			}
+		}
+	}
+	
+	static class Node{
+		int y,x,d;
+		
+		public Node(int y, int x, int d) {
+			this.y = y;
+			this.x = x;
+			this.d = d;
+		}
 	}
 }

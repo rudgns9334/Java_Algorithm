@@ -27,6 +27,7 @@ public class Main {
 			if(book > 0) plusBook.add(book);
 			else minusBook.add(book);
 		}
+		
 		// 둘중 가장 거리가 먼 책 하나는 미리  빼두자. 제일 마지막에 꼽을 책
 		int MaxP = plusBook.isEmpty() ? 0 : plusBook.poll(); // 만약 비었으면 0
 		int MaxM = minusBook.isEmpty() ? 0 : Math.abs(minusBook.poll()); // 만약 비었으면 0
