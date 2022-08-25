@@ -20,7 +20,7 @@ public class Main {
 		M = Integer.parseInt(br.readLine());
 		dist = new int[N+1];
 		visit = new boolean[N+1];
-		vertex = new Vertex[N + 1];
+		vertex = new Vertex[N+1];
 		
 		for (int i = 0; i <= N; i++) {
 			vertex[i] = new Vertex(i);
@@ -46,24 +46,22 @@ public class Main {
 	}
 
 	static void dijkstra(int start) {
-		PriorityQueue<Edge> pq = new PriorityQueue<>((e1, e2) -> e1.w - e2.w);
-		pq.add(new Edge(start, 0));
+		PriorityQueue<Edge> pq = new PriorityQueue<>((e1, e2) -> e1.w - e2.w); // 가중치가 낮은 순으로 정렬
+		pq.add(new Edge(start,0));
 		dist[start] = 0;
-		int cnt = 0;
 		while(!pq.isEmpty()) {
 			Edge edge = pq.poll();
 			if(visit[edge.v]) continue;
 			visit[edge.v] = true;
+			if(edge.v == E) return;
 			for (int i = 0; i < vertex[edge.v].list.size(); i++) {
 				Edge e = vertex[edge.v].list.get(i);
-				if(dist[e.v] > dist[edge.v]+e.w) dist[e.v] = dist[edge.v] + e.w;
-			}
-			cnt++;
-			if(cnt == N) break;
-			pq.addAll(vertex[edge.v].list);
-			
-		}
-		
+				if(!visit[e.v] && dist[e.v] > dist[edge.v]+e.w) {
+					dist[e.v] = dist[edge.v] + e.w;
+					pq.add(new Edge(e.v, dist[e.v])); // 큐에 넣을 때 거리가 짧은 순으로 먼저 접근 해야함
+				}
+			}	
+		}	
 	}
 	
 	static class Vertex{
