@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	static int R, C, ey, ex, max;
+	static int R, C, max;
 	static char[][] map;
 	static int[] dy = {-1, 1, 0, 0};
 	static int[] dx = {0, 0, -1, 1};
@@ -20,7 +20,7 @@ public class Main {
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		R = Integer.parseInt(st.nextToken());
 		C = Integer.parseInt(st.nextToken());
-		max = 0;
+		max = Integer.MAX_VALUE;
 		map = new char[R][];
 		
 		for (int i = 0; i < R; i++) {
@@ -29,11 +29,7 @@ public class Main {
 		
 		for (int i = 0; i < R; i++) {
 			for (int j = 0; j < C; j++) {
-				if(map[i][j] == 'D') {
-					ey = i;
-					ex = j;
-				}
-				else if(map[i][j] == 'S') {
+				if(map[i][j] == 'S') {
 					sq.offer(new Node(i,j,0));
 				}
 				else if(map[i][j] == '*') {
@@ -42,56 +38,44 @@ public class Main {
 			}
 		}
 		
+		escape();
 		
-		
-		
-		
-
+		System.out.println(max == Integer.MAX_VALUE ? "KAKTUS" : max );
 	}
 
 	static void escape() {
 		
-		while(!q.isEmpty()) {
-			Node node = q.poll();
-			int y = node.y;
-			int x = node.x;
-			
-			for (int d = 0; d < 4; d++) {
-				int ny = y + dy[d];
-				int nx = x + dx[d];
-				
-				if(ny<0 || nx<0 || ny>=R || nx>=C) continue;
-				if(map[ny][nx] == '.') {
-					map[ny][nx] = '*';
-					q.offer(new Node(ny, nx, node.t + 1));
-				}
-			}
-			
-			while(!sq.isEmpty()) {
-				Node sn = sq.peek();
-				if(sn.t == max) break;
-				sn = sq.poll();
-				int sy = sn.y;
-				int sx = sn.x;
-				
+		while(!sq.isEmpty()) {
+			int waterSize = q.size();
+			for (int i = 0; i < waterSize; i++) {
+				Node node = q.poll();
 				for (int d = 0; d < 4; d++) {
-					int nsy = sy + dy[d];
-					int nsx = sx + dx[d];
-					if(nsy == ey && nsx == ex) {
-						System.out.println(max+1);
-						return;
-					}
-					if(nsy<0 || nsx<0 || nsy>=R || nsx>=C) continue;
-					if(map[nsy][nsx] == '.') {
-						map[nsy][nsx] = '-';
-						sq.offer(new Node(nsy, nsx, sn.t+1));
+					int ny = node.y + dy[d];
+					int nx = node.x + dx[d];
+					
+					if(ny<0 || nx<0 || ny>=R || nx>=C) continue;
+					if(map[ny][nx] == '.') {
+						map[ny][nx] = '*';
+						q.offer(new Node(ny, nx, node.t + 1));
 					}
 				}
 			}
-			
-			if(sq.isEmpty()) System.out.println("KAKTUS");
-			
-			
+			int goSize = sq.size();
+			for (int i = 0; i < goSize; i++) {
+				Node node = sq.poll();
+				for (int d = 0; d < 4; d++) {
+					int ny = node.y + dy[d];
+					int nx = node.x + dx[d];
+					if(ny<0 || nx<0 || ny>=R || nx>=C) continue;
+					if( map[ny][nx] == 'D') { // 목적지 도달
+	                    max = Math.min(max, node.t + 1 );
+	                    return; // 바로 종료
+	                }else if( map[ny][nx] == '.') {                
+	                    map[ny][nx] = 'S';
+	                    sq.offer(new Node(ny, nx, node.t + 1)); // 다음 번 방문할 고슴도치  
+	                }
+				}
+			}
 		}
 		
 	}
