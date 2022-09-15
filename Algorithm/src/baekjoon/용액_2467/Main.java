@@ -21,6 +21,7 @@ public class Main {
 			sol[i] = Integer.parseInt(st.nextToken());
 		}
 		// -99 -2 -1 4 98
+		
 		int l = 0;
 		int r = N-1;
 		while(l < r) {
