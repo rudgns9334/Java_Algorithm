@@ -46,7 +46,7 @@ public class Main {
 		}
 		
 		// 우선순위 방향 입력
-		for (int i = 1; i < M; i++) {
+		for (int i = 1; i <= M; i++) {
 			for (int j = 1; j <= 4; j++) {
 				st = new StringTokenizer(br.readLine());
 				for (int k = 0; k < 4; k++) {
@@ -57,6 +57,8 @@ public class Main {
 		
 		start();
 		
+		System.out.println(time);
+		
 		
 	}
 	
@@ -66,8 +68,12 @@ public class Main {
 			// 상어를 움직여보자.
 			sharkMove();
 			mapUpdate();
+			if(check()) {
+				return;
+			}
 			
 		}
+		time = -1;
 	}
 	
 	static void sharkMove() {
@@ -82,7 +88,7 @@ public class Main {
 			for (int j = 0; j < 4; j++) {
 				int d = sharks[i].pd[sharks[i].d][j];
 				int ny = y + dy[d];
-				int nx = x + dy[d];
+				int nx = x + dx[d];
 				
 				if(ny<=0 || nx<=0 || ny>N || nx>N) continue;
 				if(map[ny][nx].n == 0) {
@@ -107,11 +113,35 @@ public class Main {
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= N; j++) {
 				Node node = map[i][j];
-				if(node.n == 0)
+				if(node.n == 0) continue;
+				else {
+					node.smell--;
+					if(node.smell == 0) {
+						node.n = 0;
+					}
+				}
 			}
+		}
+		for (int i = 1; i <= M; i++) {
+			if(sharks[i].out) continue;
+			int y = sharks[i].y;
+			int x = sharks[i].x;
+			if(map[y][x].smell == K) {
+				sharks[i].out = true;
+			}else {
+				map[y][x].n = sharks[i].n;
+				map[y][x].smell = K;
+			}
+			
 		}
 	}
 	
+	static boolean check() {
+		for (int i = 2; i <= M; i++) {
+			if(!sharks[i].out) return false;
+		}
+		return true;
+	}
 	static class Node{
 		int n; // 상어 번호  0이면 빈곳
 		int smell; // 냄세 남은 횟수
