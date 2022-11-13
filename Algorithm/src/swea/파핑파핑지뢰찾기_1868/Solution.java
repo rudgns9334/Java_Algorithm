@@ -21,9 +21,9 @@ public class Solution {
 		for (int t = 1; t <= T; t++) {
 			N = Integer.parseInt(br.readLine());
 			ans = 0;
-			map = new char[N][N];
-			mineCnt = new int[N][N];
-			visit = new boolean[N][N];
+			map = new char[N][N]; // 원래 입력 맵
+			mineCnt = new int[N][N]; // 주변에 있는 지뢰 수
+			visit = new boolean[N][N]; // 이게 bfs 방문했는지 == 클릭을했는지
 			
 			for (int i = 0; i < N; i++) {
 				map[i] = br.readLine().toCharArray();
