@@ -2,9 +2,7 @@ package baekjoon.미네랄_2933;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
@@ -51,6 +49,7 @@ public class Main {
 	}
 	
 	static void start(int cnt) {
+		if(high[cnt] > R) return;
 		int y = R-high[cnt];
 		pq.clear();
 		if(cnt%2 == 0) {
@@ -60,14 +59,14 @@ public class Main {
 				x = x + dx[2];
 				if(map[y][x] == 'x') {
 					map[y][x] = '.';
-					if(check(y,x,1)) {
+					if(check(y,x,3)) {
 						gravity();
 					}
 					break;
 				}
 			}
 		}else {
-			// 오른쪽에서 왼쪽으로 d = 2
+			// 오른쪽에서 왼쪽으로 d = 3
 			int x = C;
 			for (int i = 0; i < C; i++) {
 				x = x + dx[3];
@@ -83,25 +82,26 @@ public class Main {
 	}
 	
 	static boolean check(int y, int x, int type) {
-		visit = new boolean[R][C];
 //		System.out.println("y : " + y + " x : " + x);
-		for (int i = 1; i < 4; i=i+type) {
+		boolean ok = false;
+		for (int i = 0; i < 4; i++) {
+			if(i == type) continue;
 			int ny = y + dy[i];
 			int nx = x + dx[i];
 //			System.out.println(i);
-			if(ny<0 || nx<0 || ny>=R || nx>=C || visit[ny][nx]) continue;
+			if(ny<0 || nx<0 || ny>=R || nx>=C) continue;
 			
 //			System.out.println("inddd y : " + ny + " x : " + nx);
 			if(map[ny][nx] == 'x') {
-				
-				if(dfs(ny,nx)) {
-					return false;
-				}else {
-					return true;
+				visit = new boolean[R][C];
+				pq.clear();
+				if(!dfs(ny,nx)) {
+					ok = true;
+					break;
 				}
 			}
 		}
-		return false;
+		return ok;
 	}
 	
 	static boolean dfs(int y, int x) {
@@ -119,7 +119,7 @@ public class Main {
 			
 			if(ny<0 || nx<0 || ny>=R || nx>=C || visit[ny][nx]) continue;
 			if(map[ny][nx] == 'x') {
-				ok = dfs(ny,nx);
+				ok |= dfs(ny,nx);
 			}
 		}
 		
@@ -130,7 +130,7 @@ public class Main {
 		// 상 좌 우 만 체크
 		int size = pq.size();
 		
-		int minH = R+1;
+		int minH = R;
 		Iterator<Node> its = pq.iterator();
 //		System.out.println(size);
 		// 최소 높이 차이 구하기
@@ -139,6 +139,7 @@ public class Main {
 			Node n = its.next();
 			
 			Y = n.y+1;
+			if(Y >= R) return;
 			if(map[Y][n.x] == 'x') continue;
 			
 			while(Y < R) {
@@ -153,10 +154,11 @@ public class Main {
 					
 					break;
 				}
-				if(Y == R-1) {
-					if(minH > Y-n.y) {
-						minH = Y - n.y + 1;
+				else if(Y == R-1) {
+					if(minH > R-n.y) {
+						minH = R - n.y;
 					}
+					break;
 				}
 				Y++;
 			}
