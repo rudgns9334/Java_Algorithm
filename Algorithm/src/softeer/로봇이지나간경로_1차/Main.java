@@ -2,6 +2,10 @@ package softeer.로봇이지나간경로_1차;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -37,7 +41,7 @@ public class Main {
 		System.out.println((n.y+1) + " " + (n.x+1));
 		if(start == 0) System.out.println(">");
 		if(start == 1) System.out.println("<");
-		if(start == 2) System.out.println("V");
+		if(start == 2) System.out.println("v");
 		if(start == 3) System.out.println("^");
 		
 		System.out.println(sb.toString());
