@@ -51,6 +51,7 @@ class Solution {
 				ans = Integer.parseInt(st.nextToken());
 				if (userAns != ans)
 				{
+					System.out.println("q : " + q + " : ans : " + ans + " userAns : " + userAns);
 					isCorrect = false;
 				}
 				break;
@@ -63,6 +64,7 @@ class Solution {
 				ans = Integer.parseInt(st.nextToken());
 				if (userAns != ans)
 				{
+					System.out.println("q : " + q + " : ans : " + ans + " userAns : " + userAns);
 					isCorrect = false;
 				}
 				break;
@@ -78,7 +80,7 @@ class Solution {
 	{
 		int TC, MARK;
 	
-//		System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine(), " ");

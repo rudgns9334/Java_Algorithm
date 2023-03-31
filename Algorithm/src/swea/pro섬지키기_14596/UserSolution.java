@@ -1,5 +1,7 @@
 package swea.pro섬지키기_14596;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 class UserSolution
@@ -26,34 +28,58 @@ class UserSolution
 
 	public int numberOfCandidate(int M, int mStructure[])
 	{
-		System.out.println("numberOfCandidate");
+//		System.out.println("numberOfCandidate");
 		m = M;
 		structure = mStructure.clone();
 		int cnt = match();
-		System.out.println(cnt);
+//		System.out.println(cnt);
 		return cnt;
 	}
 
 	public int maxArea(int M, int mStructure[], int mSeaLevel)
 	{
-		System.out.println("maxArea");
-		int cnt = -1;
+//		System.out.println("maxArea");
+		int maxCnt = -1;
 		m = M;
 		structure = mStructure.clone();
-		tmp = new int[n+2][n+2];
-		for (int i = 1; i <= n; i++) {
-			for (int j = 1; j <= n; j++) {
-				tmp[i][j] = map[i-1][j-1];
+		
+		List<Node> nodes = setStructure();
+		if(nodes.isEmpty()) {
+//			System.out.println(maxCnt);
+			return maxCnt;
+		}
+//		maxCnt = 0;
+		for (Node node : nodes) {
+			if(node.h < mSeaLevel) continue;
+			tmp = new int[n+2][n+2];
+			for (int i = 1; i <= n; i++) {
+				for (int j = 1; j <= n; j++) {
+					tmp[i][j] = map[i-1][j-1];
+				}
+			}
+			
+			int ny = node.y + 1;
+			int nx = node.x + 1;
+			tmp[ny][nx] = node.h;
+			for (int i = 1; i < m; i++) {
+				ny += dy[node.d];
+				nx += dx[node.d];
+				tmp[ny][nx] = node.h;
+			}
+			int cnt = bfs(mSeaLevel);
+//			if(cnt == 3) System.out.println("ho");
+			maxCnt = Math.max(cnt, maxCnt);
+		}
+		if(maxCnt == -1) {
+			maxCnt = 0;
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					if(map[i][j] >= mSeaLevel) maxCnt++;
+				}
 			}
 		}
-		Node node = setStructure();
-		tmp[node.y+1][node.x+1] = node.h;
-		for (int i = 1; i < m; i++) {
-			tmp[node.y+1+dy[node.d]][node.x+1+dx[node.d]] = node.h;
-		}
-		cnt = bfs(mSeaLevel);
-		System.out.println(cnt);
-		return cnt;
+//		System.out.println(maxCnt);
+		return maxCnt;
 	}
 	
 	static int match() {
@@ -101,41 +127,38 @@ class UserSolution
 		return cnt;
 	}
 	
-static Node setStructure() {
-		
-		int maxHigh = 0;
-		Node node = new Node(0, 0, 0, maxHigh);
+static List<Node> setStructure() {
+
+		List<Node> nodes = new ArrayList<>();
 		// 좌에서 우 비교
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
 				int high = map[i][j] + structure[0];
-				if(high > maxHigh) {
-					maxHigh = high;
-					for (int d = 0; d < 4; d++) {
-						if(i + dy[d]*(m-1) < 0) continue;
-						if(i + dy[d]*(m-1) >= n) continue;
-						if(j + dx[d]*(m-1) < 0) continue;
-						if(j + dx[d]*(m-1) >= n) continue;
-						int k = 1;
-						int ny = i;
-						int nx = j;
-						while(k < m) {
-							ny += dy[d];
-							nx += dx[d];
-							if(high != map[ny][nx] + structure[k]) break;
-							k++;
-						}
-						if(k == m) {
-//							System.out.println("i : "+i+" j : "+j);
-							node = new Node(i, j, d, maxHigh);
-						}
+				
+				for (int d = 0; d < 4; d++) {
+					if(i + dy[d]*(m-1) < 0) continue;
+					if(i + dy[d]*(m-1) >= n) continue;
+					if(j + dx[d]*(m-1) < 0) continue;
+					if(j + dx[d]*(m-1) >= n) continue;
+					int k = 1;
+					int ny = i;
+					int nx = j;
+					
+					while(k < m) {
+						ny += dy[d];
+						nx += dx[d];
+						if(high != map[ny][nx] + structure[k]) break;
+						k++;
+					}
+					if(k == m) {
+//						System.out.println("i : "+i+" j : "+j);
+						nodes.add(new Node(i, j, d, high));
 					}
 				}
-				
 			}
 		}
 		
-		return node;
+		return nodes;
 	}
 
 	static int bfs(int level) {
