@@ -104,6 +104,7 @@ class Solution {
 				ans = Integer.parseInt((st.nextToken()));
 				if (userAns != ans)
 				{
+					System.out.println("q : " + q);
 					isCorrect = false;
 				}
 				break;

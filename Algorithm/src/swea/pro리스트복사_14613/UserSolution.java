@@ -1,6 +1,8 @@
 package swea.pro리스트복사_14613;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -17,8 +19,8 @@ class UserSolution
 	public void makeList(char mName[], int mLength, int mListValue[])
 	{
 		String name = makeStr(mName);
-		LinkedNode node = new LinkedNode();
-		node.addList(mListValue, mLength);
+		LinkedNode node = new LinkedNode(mLength);
+		node.addList(mListValue);
 		map.put(name, node);
 		
 	}
@@ -28,13 +30,15 @@ class UserSolution
 		String name = makeStr(mSrc);
 		String newName = makeStr(mDest);
 		LinkedNode node = map.get(name);
+		
 		if(mCopy) {
-			LinkedNode newNode = new LinkedNode();
-			newNode.addList(node);
+			LinkedNode newNode = new LinkedNode(node);
+			node.addChild(newNode);
 			map.put(newName, newNode);
 		}else {
 			map.put(newName, node);
 		}
+		
 	}
 
 	public void updateElement(char mName[], int mIndex, int mValue)
@@ -49,7 +53,7 @@ class UserSolution
 	{
 		String name = makeStr(mName);
 		LinkedNode node = map.get(name);
-		
+//		System.out.println(node.getElement(mIndex));
 		return node.getElement(mIndex);
 	}
 	
@@ -63,72 +67,86 @@ class UserSolution
 	}
 	
 	static class Node{
-		int data;
-		Node pre;
-		Node next;
+		int[] list;
+		public Node(int idx) {
+			this.list = new int[idx];
+		}
 		
-		public Node(int data) {
-			this.data = data;
-			this.pre = null;
-			this.next = null;
+		public void addList(int[] values) {
+			for (int i = 0; i < list.length; i++) {
+				this.list[i] = values[i];
+			}
+		}
+		
+		public int getList(int idx) {
+			return this.list[idx];
+		}
+		
+		public void setList(int idx, int value) {
+			this.list[idx] = value;
 		}
 	}
 	
+	
 	static class LinkedNode{
-		Node head;
-		Node end;
+		HashMap<Integer, Integer> change;
+		Node next;
+		LinkedNode parent;
+		List<LinkedNode> child;
 		
-		public LinkedNode() {
-			this.head = new Node(-1);
-			this.end = new Node(-2);
-			this.head.next = this.end;
-			this.end.pre = this.head;
+		public LinkedNode(LinkedNode parent) {
+			this.change = new HashMap<>();
+			this.child = new ArrayList<>();
+			this.parent = parent;
 		}
 		
-		public void addList(int[] list, int length) {
-			
-			for (int i = 0; i<length ;i++) {
-				Node node = new Node(list[i]);
-				node.pre =end.pre;
-				end.pre.next = node;
-				
-				node.next = end;
-				end.pre = node;
-			}
+		public LinkedNode(int length) {
+			this.change = new HashMap<>();
+			this.next = new Node(length);
+			this.child = new ArrayList<>();
 		}
 		
-public void addList(LinkedNode node) {
-			Node tmp = node.head.next;
-			while (tmp != node.end) {
-				Node n = new Node(tmp.data);
-				n.pre =end.pre;
-				end.pre.next = n;
-				
-				n.next = end;
-				end.pre = n;
-				tmp = tmp.next;
-			}
+		public void addChild(LinkedNode child) {
+			this.child.add(child);
 		}
 		
+		
+		public void addList(int[] values) {
+			this.next.addList(values);
+		}
+		
+		public void addList(Node node) {
+			this.next = node;
+		}
 		
 		public int getElement(int idx) {
-			Node tmp = head.next;
-			int i = 0;
-			while(i<idx) {
-				i++;
-				tmp = tmp.next;
+			if(this.next != null) {
+				return this.next.getList(idx);
+			}else {
+				if(change.containsKey(idx)) return change.get(idx);
+				else return this.parent.getElement(idx);
 			}
-			return tmp.data;
+			
 		}
 		
 		public void setElement(int idx, int value) {
-			Node tmp = head.next;
-			int i = 0;
-			while(i<idx) {
-				i++;
-				tmp = tmp.next;
+			int v = this.getElement(idx);
+			this.child.forEach(n -> n.addChange(idx, v));
+			if(this.next != null) {
+				this.next.setList(idx, value);
+			}else {
+				this.change.put(idx, value);
 			}
-			tmp.data = value;
+			
+		}
+		
+		public void addChange(int idx, int value) {
+			if(!this.change.containsKey(idx)) change.put(idx, value);
+			
+		}
+		
+		public int getLength() {
+			return this.next.list.length;
 		}
 	}
 }
