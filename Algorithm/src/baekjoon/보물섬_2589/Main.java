@@ -35,6 +35,7 @@ public class Main {
 					visit = new boolean[N][M];
 					visit[i][j] = true;
 					bfs(i, j);
+					// 이것은 bfs
 				}
 			}
 		}
